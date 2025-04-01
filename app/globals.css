@@ -25,15 +25,25 @@
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
 
-    /* Sidebar specific variables */
+    /* Sidebar colors */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-border: 220 13% 91%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Chart colors */
+    --chart-1: 215 100% 50%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 355 100% 50%;
+    --chart-4: 45 100% 50%;
+    --chart-5: 270 100% 50%;
+
+    /* Animation durations */
+    --animation-duration-slow: 1000ms;
+    --animation-duration-medium: 800ms;
+    --animation-duration-fast: 500ms;
   }
 
   .dark {
@@ -57,15 +67,20 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
 
-    /* Sidebar specific variables for dark mode */
+    /* Sidebar colors */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 240 5.9% 10%;
+    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Chart colors */
+    --chart-1: 215 100% 60%;
+    --chart-2: 142 76% 45%;
+    --chart-3: 355 100% 60%;
+    --chart-4: 45 100% 60%;
+    --chart-5: 270 100% 60%;
   }
 }
 
@@ -75,7 +90,94 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
+@layer utilities {
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+
+  /* Animation utilities */
+  .animate-fade-in {
+    opacity: 0;
+    animation: fadeIn var(--animation-duration-medium) ease forwards;
+  }
+
+  .animate-fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp var(--animation-duration-medium) ease forwards;
+  }
+
+  .animate-fade-left {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: fadeLeft var(--animation-duration-medium) ease forwards;
+  }
+
+  .animate-fade-right {
+    opacity: 0;
+    transform: translateX(20px);
+    animation: fadeRight var(--animation-duration-medium) ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in,
+    .animate-fade-up,
+    .animate-fade-left,
+    .animate-fade-right {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Respect user's preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

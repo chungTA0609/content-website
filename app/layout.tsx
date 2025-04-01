@@ -1,18 +1,15 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata } from "next/dist/lib/metadata/types/metadata-interface"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { SidebarProvider } from "@/components/sidebar-provider"
 import { ThemeProvider } from "@/components/theme-provider"
-import { SidebarProvider } from "@/components/ui/sidebar"
-import { MainSidebar } from "@/components/main-sidebar"
-import { SiteHeader } from "@/components/site-header"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FinanceInsight - Expert Financial Analysis & Investment Strategies",
-  description:
-    "Discover expert financial analysis, market insights, and investment strategies to help you build wealth and achieve financial freedom.",
+  title: "Insights Platform",
+  description: "A platform for sharing in-depth content about Finance, Commodities, and Philosophy & Buddhism",
     generator: 'v0.dev'
 }
 
@@ -24,16 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <SidebarProvider>
-            <div className="relative flex min-h-screen">
-              <MainSidebar />
-              <div className="flex flex-1 flex-col">
-                <SiteHeader />
-                <main className="flex-1">{children}</main>
-              </div>
-            </div>
-          </SidebarProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <SidebarProvider>{children}</SidebarProvider>
         </ThemeProvider>
       </body>
     </html>

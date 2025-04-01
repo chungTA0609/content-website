@@ -1,25 +1,30 @@
-// If the file doesn't exist or has a different export, let's create/update it
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
 
-export function useIsMobile() {
+export function useMobile(breakpoint = 768): boolean {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+    // Check if window is available (client-side)
+    if (typeof window === "undefined") return
+
+    // Initial check
+    setIsMobile(window.innerWidth < breakpoint)
+
+    // Handler for window resize
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < breakpoint)
     }
 
-    // Check on initial load
-    checkIsMobile()
+    // Add event listener
+    window.addEventListener("resize", handleResize)
 
-    // Add event listener for window resize
-    window.addEventListener("resize", checkIsMobile)
-
-    // Clean up event listener
-    return () => window.removeEventListener("resize", checkIsMobile)
-  }, [])
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [breakpoint])
 
   return isMobile
 }

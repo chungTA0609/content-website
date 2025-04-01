@@ -1,167 +1,155 @@
 "use client"
 
-import * as React from "react"
+import type React from "react"
+
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  ChevronDown,
-  ChevronRight,
-  FileText,
-  Home,
-  LineChart,
-  Menu,
-  Package,
-  PanelLeft,
-  ScrollText,
-  Sigma,
-} from "lucide-react"
+import { ChevronDown, ChevronRight, Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useSidebar } from "./sidebar-provider"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { TREE_DATA } from "@/lib/constants"
 
-interface NavItemProps {
-  href: string
-  icon: React.ElementType
-  label: string
-  isActive?: boolean
-  children?: React.ReactNode
+type TreeNode = {
+  id: string
+  name: string
+  href?: string
+  icon?: React.ElementType
+  children?: TreeNode[]
 }
 
-function NavItem({ href, icon: Icon, label, isActive, children }: NavItemProps) {
-  const [open, setOpen] = React.useState(false)
-  const hasChildren = Boolean(children)
-
-  if (hasChildren) {
-    return (
-      <Collapsible open={open} onOpenChange={setOpen} className="w-full">
-        <div className="flex items-center">
-          <CollapsibleTrigger asChild className="flex-1">
-            <Button
-              variant="ghost"
-              className={cn("w-full justify-start gap-2 px-3 py-2 text-left", isActive && "bg-muted")}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="flex-1 truncate">{label}</span>
-              {open ? <ChevronDown className="h-4 w-4 shrink-0" /> : <ChevronRight className="h-4 w-4 shrink-0" />}
-            </Button>
-          </CollapsibleTrigger>
-        </div>
-        <CollapsibleContent className="pl-6 pt-1">{children}</CollapsibleContent>
-      </Collapsible>
-    )
-  }
+function TreeNode({ node, level = 0 }: { node: TreeNode; level?: number }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()
+  const isActive = pathname === node.href
+  const hasChildren = node.children && node.children.length > 0
+  const Icon = node.icon
 
   return (
-    <Link href={href} passHref>
-      <Button variant="ghost" className={cn("w-full justify-start gap-2 px-3 py-2 text-left", isActive && "bg-muted")}>
-        <Icon className="h-4 w-4" />
-        <span className="flex-1 truncate">{label}</span>
-      </Button>
-    </Link>
+    <div>
+      <div
+        className={cn(
+          "flex items-center py-2 px-3 rounded-md text-sm",
+          isActive ? "bg-accent text-accent-foreground font-medium" : "hover:bg-accent/50",
+          level > 0 && "ml-4",
+        )}
+      >
+        {hasChildren ? (
+          <Button variant="ghost" size="icon" className="h-5 w-5 p-0 mr-1" onClick={() => setIsOpen(!isOpen)}>
+            {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </Button>
+        ) : (
+          <div className="w-5 mr-1"></div>
+        )}
+
+        {Icon && <Icon className="mr-2 h-4 w-4" />}
+
+        {node.href ? (
+          <Link href={node.href} className="flex-1">
+            {node.name}
+          </Link>
+        ) : (
+          <span className="flex-1 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+            {node.name}
+          </span>
+        )}
+      </div>
+
+      {hasChildren && isOpen && (
+        <div className="mt-1">
+          {node.children?.map((child) => (
+            <TreeNode key={child.id} node={child} level={level + 1} />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
-export function Sidebar() {
-  const { isOpen, toggleSidebar, isMobile } = useSidebar()
-  const pathname = usePathname()
+export default function Sidebar() {
+  const { isOpen, toggle } = useSidebar()
 
   return (
     <>
-      {/* Mobile menu button */}
-      <Button variant="ghost" size="icon" className="fixed left-4 top-4 z-50 md:hidden" onClick={toggleSidebar}>
-        <Menu className="h-5 w-5" />
-        <span className="sr-only">Toggle menu</span>
-      </Button>
+      <div className={cn("fixed top-0 z-40 lg:hidden h-16 w-full bg-background border-b flex items-center px-4")}>
+        <Button variant="outline" size="icon" onClick={toggle} aria-label="Toggle Menu">
+          <Menu className="h-5 w-5" />
+        </Button>
+        <h1 className="ml-4 text-lg font-semibold">Insights Platform</h1>
+      </div>
 
-      {/* Sidebar backdrop for mobile */}
-      {isMobile && isOpen && (
-        <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden" onClick={toggleSidebar} />
-      )}
-
-      {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform border-r bg-background transition-transform duration-200 ease-in-out md:relative md:z-0",
-          isOpen ? "translate-x-0" : "-translate-x-full md:w-16 md:translate-x-0",
+          "fixed inset-y-0 z-50 flex-col bg-background border-r shadow-sm",
+          "transition-all duration-300 ease-in-out",
+          isOpen ? "w-64" : "w-0 lg:w-16",
+          "lg:flex hidden",
         )}
       >
-        <div className="flex h-16 items-center justify-between px-4">
-          <Link href="/" className={cn("flex items-center gap-2", !isOpen && "md:hidden")}>
-            <Sigma className="h-6 w-6" />
-            <span className="font-semibold">Knowledge Hub</span>
-          </Link>
-          <Button variant="ghost" size="icon" className="hidden md:flex" onClick={toggleSidebar}>
-            <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle sidebar</span>
+        <div className="p-4 border-b flex items-center justify-between">
+          <h1 className={cn("font-semibold transition-opacity", isOpen ? "opacity-100" : "opacity-0 lg:hidden")}>
+            Insights Platform
+          </h1>
+          <Button variant="outline" size="icon" onClick={toggle} aria-label="Toggle Menu">
+            <Menu className="h-5 w-5" />
           </Button>
         </div>
 
-        <div className="space-y-1 px-2 py-2">
-          <NavItem href="/" icon={Home} label="Overview" isActive={pathname === "/"} />
-
-          <NavItem href="/finance" icon={LineChart} label="Finance" isActive={pathname.startsWith("/finance")}>
-            <NavItem href="/finance/data" icon={FileText} label="Data Files" isActive={pathname === "/finance/data"} />
-            <NavItem
-              href="/finance/charts"
-              icon={LineChart}
-              label="Price Charts"
-              isActive={pathname === "/finance/charts"}
-            />
-            <NavItem
-              href="/finance/articles"
-              icon={ScrollText}
-              label="Analytical Articles"
-              isActive={pathname === "/finance/articles"}
-            />
-          </NavItem>
-
-          <NavItem
-            href="/commodities"
-            icon={Package}
-            label="Commodities"
-            isActive={pathname.startsWith("/commodities")}
+        <ScrollArea className="flex-1 py-2">
+          <div
+            className={cn(
+              "transition-all duration-300 ease-in-out",
+              isOpen ? "opacity-100 w-full" : "opacity-0 w-0 lg:w-0 overflow-hidden",
+            )}
           >
-            <NavItem
-              href="/commodities/data"
-              icon={FileText}
-              label="Data Files"
-              isActive={pathname === "/commodities/data"}
-            />
-            <NavItem
-              href="/commodities/charts"
-              icon={LineChart}
-              label="Charts"
-              isActive={pathname === "/commodities/charts"}
-            />
-            <NavItem
-              href="/commodities/articles"
-              icon={ScrollText}
-              label="Analytical Articles"
-              isActive={pathname === "/commodities/articles"}
-            />
-          </NavItem>
+            {TREE_DATA.map((node) => (
+              <TreeNode key={node.id} node={node} />
+            ))}
+          </div>
 
-          <NavItem
-            href="/philosophy"
-            icon={Sigma}
-            label="Philosophy & Buddhism"
-            isActive={pathname.startsWith("/philosophy")}
-          >
-            <NavItem
-              href="/philosophy/philosophy"
-              icon={Sigma}
-              label="Philosophy"
-              isActive={pathname === "/philosophy/philosophy"}
-            />
-            <NavItem
-              href="/philosophy/buddhism"
-              icon={Sigma}
-              label="Buddhism"
-              isActive={pathname === "/philosophy/buddhism"}
-            />
-          </NavItem>
-        </div>
+          {!isOpen && (
+            <div className="lg:flex flex-col items-center py-2 hidden">
+              {TREE_DATA.map((node) => {
+                const Icon = node.icon
+                return Icon ? (
+                  <Link
+                    key={node.id}
+                    href={node.href || (node.children && node.children.length > 0 ? "#" : "#")}
+                    className="p-2 rounded-md hover:bg-accent my-1"
+                    title={node.name}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </Link>
+                ) : null
+              })}
+            </div>
+          )}
+        </ScrollArea>
+      </div>
+
+      {/* Mobile sidebar */}
+      <div
+        className={cn(
+          "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm transition-all duration-100",
+          isOpen ? "lg:hidden" : "hidden",
+        )}
+        onClick={toggle}
+      />
+
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-background border-r shadow-lg transition-transform duration-300 ease-in-out",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+          "lg:hidden pt-16",
+        )}
+      >
+        <ScrollArea className="h-full py-2">
+          {TREE_DATA.map((node) => (
+            <TreeNode key={node.id} node={node} />
+          ))}
+        </ScrollArea>
       </div>
     </>
   )

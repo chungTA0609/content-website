@@ -3,30 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowDown, ArrowUp } from "lucide-react"
-
-type MarketSummary = {
-  sp500: { value: number; change: number }
-  nasdaq: { value: number; change: number }
-  dowJones: { value: number; change: number }
-}
-
-type Stock = {
-  symbol: string
-  price: number
-  change: number
-}
-
-type CryptoCurrency = {
-  symbol: string
-  price: number
-  change: number
-}
-
-type MarketData = {
-  marketSummary: MarketSummary
-  topStocks: Stock[]
-  cryptoCurrencies: CryptoCurrency[]
-}
+import { MOCK_MARKET_DATA, type MarketData } from "@/lib/constants"
 
 export function MarketData() {
   const [data, setData] = useState<MarketData | null>(null)
@@ -36,15 +13,9 @@ export function MarketData() {
   useEffect(() => {
     const fetchMarketData = async () => {
       try {
-        // Using the fetch API (supported in Node.js 20)
-        const response = await fetch("/api/market-data")
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch market data")
-        }
-
-        const marketData = await response.json()
-        setData(marketData)
+        // In a real application, this would fetch data from an API
+        // For demonstration, we'll use the mock data
+        setData(MOCK_MARKET_DATA)
       } catch (err) {
         setError("Error loading market data")
         console.error(err)

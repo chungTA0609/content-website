@@ -1,153 +1,16 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search } from "lucide-react"
-import { BlogPostCard, type BlogPost } from "@/components/blog-post-card"
-
-// Mock blog post data
-const blogPosts: BlogPost[] = [
-    {
-        id: 1,
-        title: "Understanding Cryptocurrency: A Beginner's Guide to Digital Assets",
-        slug: "understanding-cryptocurrency-beginners-guide",
-        excerpt:
-            "Learn the fundamentals of cryptocurrency, blockchain technology, and how digital assets are changing the financial landscape for investors worldwide.",
-        category: "Cryptocurrency",
-        author: "Michael Chen",
-        authorImage: "/placeholder.svg?height=50&width=50&text=MC",
-        date: "April 1, 2025",
-        readTime: "8 min read",
-        image: "/placeholder.svg?height=400&width=600&text=Cryptocurrency",
-        featured: true,
-        tags: ["Bitcoin", "Ethereum", "Blockchain"],
-    },
-    {
-        id: 2,
-        title: "The Future of ESG Investing: Sustainable Finance Trends for 2025",
-        slug: "future-esg-investing-sustainable-finance-trends",
-        excerpt:
-            "Discover how environmental, social, and governance factors are reshaping investment strategies and creating new opportunities in the financial markets.",
-        category: "Sustainable Finance",
-        author: "Sarah Johnson",
-        authorImage: "/placeholder.svg?height=50&width=50&text=SJ",
-        date: "March 28, 2025",
-        readTime: "10 min read",
-        image: "/placeholder.svg?height=400&width=600&text=ESG+Investing",
-        featured: true,
-        tags: ["ESG", "Sustainable Investing", "Green Bonds"],
-    },
-    {
-        id: 3,
-        title: "Navigating Market Volatility: Strategies for Uncertain Times",
-        slug: "navigating-market-volatility-strategies",
-        excerpt:
-            "Expert analysis on how to position your portfolio during periods of market uncertainty, with practical advice for both defensive and opportunistic approaches.",
-        category: "Market Analysis",
-        author: "David Williams",
-        authorImage: "/placeholder.svg?height=50&width=50&text=DW",
-        date: "March 25, 2025",
-        readTime: "12 min read",
-        image: "/placeholder.svg?height=400&width=600&text=Market+Volatility",
-        featured: true,
-        tags: ["Risk Management", "Portfolio Strategy", "Market Timing"],
-    },
-    {
-        id: 4,
-        title: "Retirement Planning in Your 30s: Building Wealth for the Long Term",
-        slug: "retirement-planning-30s-building-wealth",
-        excerpt:
-            "Why starting retirement planning early is crucial and how to optimize your savings strategy to ensure financial security in your golden years.",
-        category: "Retirement",
-        author: "Jennifer Lee",
-        authorImage: "/placeholder.svg?height=50&width=50&text=JL",
-        date: "March 22, 2025",
-        readTime: "9 min read",
-        image: "/placeholder.svg?height=400&width=600&text=Retirement+Planning",
-        featured: false,
-        tags: ["401(k)", "IRA", "Financial Planning"],
-    },
-    {
-        id: 5,
-        title: "The Rise of Decentralized Finance (DeFi): Disrupting Traditional Banking",
-        slug: "rise-defi-disrupting-traditional-banking",
-        excerpt:
-            "Exploring how DeFi protocols are challenging conventional financial systems and creating new opportunities for lending, borrowing, and investing.",
-        category: "Fintech",
-        author: "Robert Thompson",
-        authorImage: "/placeholder.svg?height=50&width=50&text=RT",
-        date: "March 18, 2025",
-        readTime: "11 min read",
-        image: "/placeholder.svg?height=400&width=600&text=DeFi",
-        featured: false,
-        tags: ["DeFi", "Smart Contracts", "Yield Farming"],
-    },
-    {
-        id: 6,
-        title: "Real Estate Investment Trusts (REITs): Passive Income Through Property",
-        slug: "reits-passive-income-property",
-        excerpt:
-            "A comprehensive guide to investing in REITs, including different types, tax implications, and how they can provide steady income in your investment portfolio.",
-        category: "Real Estate",
-        author: "Emily Rodriguez",
-        authorImage: "/placeholder.svg?height=50&width=50&text=ER",
-        date: "March 15, 2025",
-        readTime: "10 min read",
-        image: "/placeholder.svg?height=400&width=600&text=REITs",
-        featured: false,
-        tags: ["REITs", "Passive Income", "Dividend Investing"],
-    },
-    {
-        id: 7,
-        title: "Algorithmic Trading: How AI is Transforming Financial Markets",
-        slug: "algorithmic-trading-ai-transforming-markets",
-        excerpt:
-            "Discover how artificial intelligence and machine learning algorithms are being used to analyze market data and execute trades with unprecedented speed and accuracy.",
-        category: "Technology",
-        author: "James Wilson",
-        authorImage: "/placeholder.svg?height=50&width=50&text=JW",
-        date: "March 12, 2025",
-        readTime: "14 min read",
-        image: "/placeholder.svg?height=400&width=600&text=Algorithmic+Trading",
-        featured: false,
-        tags: ["AI", "Machine Learning", "Quantitative Finance"],
-    },
-    {
-        id: 8,
-        title: "Tax-Efficient Investing: Strategies to Minimize Your Tax Burden",
-        slug: "tax-efficient-investing-strategies",
-        excerpt:
-            "Learn how to structure your investments to minimize taxes and maximize after-tax returns through asset location, tax-loss harvesting, and other proven techniques.",
-        category: "Tax Planning",
-        author: "Michelle Parker",
-        authorImage: "/placeholder.svg?height=50&width=50&text=MP",
-        date: "March 10, 2025",
-        readTime: "9 min read",
-        image: "/placeholder.svg?height=400&width=600&text=Tax+Planning",
-        featured: false,
-        tags: ["Tax Optimization", "Capital Gains", "Tax-Loss Harvesting"],
-    },
-    {
-        id: 9,
-        title: "The Psychology of Investing: Overcoming Emotional Biases",
-        slug: "psychology-investing-emotional-biases",
-        excerpt:
-            "Understanding the cognitive and emotional biases that affect investment decisions and practical strategies to improve your decision-making process.",
-        category: "Behavioral Finance",
-        author: "Daniel Kim",
-        authorImage: "/placeholder.svg?height=50&width=50&text=DK",
-        date: "March 8, 2025",
-        readTime: "11 min read",
-        image: "/placeholder.svg?height=400&width=600&text=Investing+Psychology",
-        featured: false,
-        tags: ["Behavioral Finance", "Decision Making", "Risk Perception"],
-    },
-]
+import { Search, PlusCircle } from "lucide-react"
+import { BlogPostCard } from "@/components/blog-post-card"
+import { BLOG_POSTS } from "@/lib/constants"
+import Link from "next/link"
 
 export default function FinanceArticlesPage() {
     // Get featured posts
-    const featuredPosts = blogPosts.filter((post) => post.featured)
+    const featuredPosts = BLOG_POSTS.filter((post) => post.featured)
     // Get regular posts
-    const regularPosts = blogPosts.filter((post) => !post.featured)
+    const regularPosts = BLOG_POSTS.filter((post) => !post.featured)
 
     return (
         <div className="min-h-screen bg-background">
@@ -158,6 +21,14 @@ export default function FinanceArticlesPage() {
                     <p className="mt-4 text-lg text-gray-300">
                         Expert perspectives on markets, investing, and financial planning
                     </p>
+                    <div className="mt-6">
+                        <Link href="/finance/articles/create">
+                            <Button className="gap-2">
+                                <PlusCircle className="h-4 w-4" />
+                                Create New Article
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -255,4 +126,3 @@ export default function FinanceArticlesPage() {
         </div>
     )
 }
-
